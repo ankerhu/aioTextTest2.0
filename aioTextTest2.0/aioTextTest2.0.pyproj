@@ -26,9 +26,13 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="apis.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="app.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="coroweb.py" />
     <Compile Include="models.py">
       <SubType>Code</SubType>
     </Compile>
