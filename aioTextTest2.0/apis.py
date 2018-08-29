@@ -10,3 +10,18 @@ class APIError(Exception):
 		self.error = error
 		self.data = data
 		self.message = message
+
+#Indicate the input value has error or invalid.The data specifies the error field of input form
+class APIValueError(APIError):
+	def __init__(self,field,message = ''):
+		super(APIValueError,self).__init__('value:invalid',field,message)
+
+#Indicate the resource was not found.The data specifies the resource name.
+class APIResourceNotFoundError(APIError):
+	def __init__(self,field,message = ''):
+		super(APIResourceNotFoundError,self).__init__('value:notfound',field,message)
+
+#Indicate the api has no permission
+class APIPermissionError(APIError):
+	def __init__(self,message = ''):
+		super(APIPermissionError,self).__init__('permission:fobidden','permission',message)
