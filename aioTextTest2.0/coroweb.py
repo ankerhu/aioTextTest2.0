@@ -69,7 +69,7 @@ def has_request_args(fn):
 			continue
 		#找到了request，但是它不是可变参数，不是关键字参数，不是命名关键字参数，则报错
 		if found and (param.kind != inspect.Parameter.VAR_POSITIONAL and param.kind != inspect.Parameter.KEYWORD_ONLY and param.kind != inspect.Parameter.VAR_KEYWORD):
-			raise ValueError('request parameter must be the last named parameter in function:%s%s' % (fn.__name__,arg_str(sig)))
+			raise ValueError('request parameter must be the last named parameter in function:%s%s' % (fn.__name__,str(sig)))
 	return found
 
 class RequestHandler(object):
