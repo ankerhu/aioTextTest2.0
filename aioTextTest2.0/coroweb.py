@@ -15,6 +15,17 @@ def get(path):
 		return wrapper
 	return decorator
 
+#Define decorator @get('/path')
+def myGet(path):
+	def decorator(func):
+		@functools.wraps(func)
+		def wrapper(*args,**kw):
+			return func(*args,**kw)
+		wrapper.__method__ = 'DELETE'
+		wrapper.__route__ = path
+		return wrapper
+	return decorator
+
 #Define decorator @post('/path')
 def post(path):
 	def decorator(func):
@@ -100,7 +111,7 @@ class RequestHandler(object):
 					kw = dict(**params)
 				else:
 					return web.HTTPBadRequest()
-			if request.method == 'GET':
+			if request.method == 'GET' or request.method == 'MYGET':
 				qs = request.query_string
 				if qs:
 					kw = dict()

@@ -34,6 +34,7 @@ class Question(Model):
 	id = StringField(primary_key = True,default = next_id,ddl='varchar(50)')
 	title_id = StringField(ddl='varchar(50)')
 	content = TextField()
+	markReference = TextField()
 
 class Mark(Model):
 	__table__ = 'marks'
