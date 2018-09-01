@@ -1,11 +1,7 @@
-import orm,asyncio
-from models import User
-async def test():
-	await orm.create_pool(loop,user='root',password='196392zwx',db='texttest')
-	u = User(openid='test openid',sessionId = 'test sessionId',feedback='test feedback')
-	await u.save()
+def test(*,jj):
+	return jj
 
-loop = asyncio.get_event_loop()
-loop.run_until_complete(test())
-loop.close()
-print('done')
+def test(*,ii):
+	return 1
+
+print(test(jj=3212))

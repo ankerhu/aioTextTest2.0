@@ -8,5 +8,9 @@ configs = {
     },
     'session': {
         'secret': 'Awesome'
+    },
+    'mina':{
+        'appId': 'wxcca6359e08b39639',
+        'appSecret': 'd021c27949d483a45ea37867d1cf1ad9'
     }
 }

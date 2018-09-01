@@ -1,25 +1,18 @@
 import re,time,json,logging,hashlib,base64,asyncio
-from coroweb import get,post,myGet
+from coroweb import get,post
 from models import User,Examination,Title,Question,Mark,Answer
+from config import configs
+from aiohttp import ClientSession
+
+appId = configs.mina.appId
+appSecret = configs.mina.appSecret
 
 @get('/')
-async def index(*,code='',cc=''):
-    #users = await User.findAll()
-    answer=''
-    if code == '123':
-        answer = '迷人的反派角色喜欢你'
-        return answer
-    if cc:
-        return cc
-
-@myGet('/')
-async def myIndex(*,myCC=''):
-    #myCC='999'
-    return myCC
-
-@get('/api/users')
-async def api_get_users():
-    users = await User.findAll(orderBy='create_at desc')
-    for u in users:
-        u.feedback = '*****'
-    return dict(users=users)
+async def index(**kw):
+    if kw.get('code',None):
+        wxAPIURL = 'https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code' % (appId,appSecret,kw['code'])
+        async with ClientSession() as session:
+            async with session.get(wxAPIURL) as resp:
+                return await resp.text()
+    if kw.get('session_key',None):
+        return kw['session_key']
