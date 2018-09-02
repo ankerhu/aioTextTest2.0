@@ -10,7 +10,7 @@ class User(Model):
 	id = StringField(primary_key = True,default = next_id,ddl='varchar(50)')
 	openid = StringField(ddl = 'varchar(255)')
 	session_key = StringField(ddl = 'varchar(255)')
-	sessionId = StringField(ddl = 'varchar(255)')
+	nickName = StringField(ddl = 'varchar(255)')
 	feedback = TextField()
 	create_at = FloatField(default = time.time)
 

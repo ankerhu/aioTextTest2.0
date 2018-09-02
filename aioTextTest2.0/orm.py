@@ -9,6 +9,7 @@ def create_args_string(num):
 		L.append('?')
 	return ','.join(L)
 
+#创建连接池
 async def create_pool(loop,**kw):
 	logging.info('create database connection pool...')
 	global __pool
@@ -25,6 +26,7 @@ async def create_pool(loop,**kw):
         loop=loop
 		)
 
+#封装select方法
 async def select(sql,args,size=None):
 	log(sql,args)
 	global __pool
@@ -39,6 +41,7 @@ async def select(sql,args,size=None):
 		logging.info('rows returned:%s'%len(rs))
 		return rs
 
+#封装Insert, Update, Delete方法
 async def execute(sql,args):
 	log(sql)
 	with (await __pool) as conn:
