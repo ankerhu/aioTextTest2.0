@@ -4,22 +4,24 @@ from orm import Model,StringField,BooleanField,FloatField,TextField
 def next_id():
 	return '%015d%s000' % (int(time.time() * 1000),uuid.uuid4().hex)
 
+#用户表
 class User(Model):
 	__table__ = 'users'
-
-	id = StringField(primary_key = True,default = next_id,ddl='varchar(50)')
-	openid = StringField(ddl = 'varchar(255)')
+	#把session_key作为主键
+	id = StringField(primary_key = True,default = next_id,ddl='varchar(255)')
 	session_key = StringField(ddl = 'varchar(255)')
 	nickName = StringField(ddl = 'varchar(255)')
 	feedback = TextField()
 	create_at = FloatField(default = time.time)
 
+#考试表
 class Examination(Model):
 	__table__ = 'examinations'
 
 	id = StringField(primary_key = True,default = next_id,ddl='varchar(50)')
 	name = StringField(ddl='varchar(50)')
 
+#题干表
 class Title(Model):
 	__table__ = 'titles'
 
@@ -28,6 +30,7 @@ class Title(Model):
 	exam_id = StringField(ddl='varchar(50)')
 	content = TextField()
 
+#题目表
 class Question(Model):
 	__table__ = 'questions'
 
@@ -36,6 +39,7 @@ class Question(Model):
 	content = TextField()
 	markReference = TextField()
 
+#评分表
 class Mark(Model):
 	__table__ = 'marks'
 
@@ -47,6 +51,7 @@ class Mark(Model):
 	markNumByMachine = FloatField(default=0.0)
 	create_at = FloatField(default = time.time)
 
+#答案表
 class Answer(Model):
 	__table__ = 'answers'
 

@@ -6,11 +6,11 @@ async def test():
 	await u.save()
 async def testFind():
 	await orm.create_pool(loop,user='root',password='196392zwx',db='texttest')
-	u = await User.findAll('openid=?',['test openid'])
-	u[0].openid = '9090'
+	u = await User.find('0015354744517956edac730a0d14873aba5f4ece018a8c2000')
+	u.openid = '9090'
 	r = await  u.update()
 	print(r)
-	
+
 loop = asyncio.get_event_loop()
 loop.run_until_complete(testFind())
 loop.close()
