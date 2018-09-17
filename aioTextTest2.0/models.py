@@ -19,16 +19,16 @@ class Examination(Model):
 	__table__ = 'examinations'
 
 	id = StringField(primary_key = True,default = next_id,ddl='varchar(50)')
-	name = StringField(ddl='varchar(50)')
+	examName = StringField(ddl='varchar(50)')
 
 #题干表
 class Title(Model):
 	__table__ = 'titles'
 
 	id = StringField(primary_key = True,default = next_id,ddl='varchar(50)')
-	name = StringField(ddl='varchar(50)')
+	titleName = StringField(ddl='varchar(50)')
 	exam_id = StringField(ddl='varchar(50)')
-	content = TextField()
+	titleContent = TextField()
 
 #题目表
 class Question(Model):
@@ -36,7 +36,7 @@ class Question(Model):
 
 	id = StringField(primary_key = True,default = next_id,ddl='varchar(50)')
 	title_id = StringField(ddl='varchar(50)')
-	content = TextField()
+	questionContent = TextField()
 	markReference = TextField()
 
 #评分表
@@ -45,10 +45,8 @@ class Mark(Model):
 
 	id = StringField(primary_key = True,default = next_id,ddl='varchar(50)')
 	user_mark_id = StringField(ddl='varchar(50)')
-	user_answer_id = StringField(ddl='varchar(50)')
-	question_id = StringField(ddl='varchar(50)')
+	answer_id = StringField(ddl='varchar(50)')
 	markNumByUser = FloatField(default=0.0)
-	markNumByMachine = FloatField(default=0.0)
 	create_at = FloatField(default = time.time)
 
 #答案表
@@ -59,3 +57,5 @@ class Answer(Model):
 	answerText = TextField()
 	question_id = StringField(ddl='varchar(50)')
 	user_id = StringField(ddl='varchar(50)')
+	markNumByMachine = FloatField(default=0.0)
+	create_at = FloatField(default = time.time)
