@@ -11,7 +11,15 @@ class User(Model):
 	id = StringField(primary_key = True,default = next_id,ddl='varchar(255)')
 	session_key = StringField(ddl = 'varchar(255)')
 	nickName = StringField(ddl = 'varchar(255)')
-	feedback = TextField()
+	create_at = FloatField(default = time.time)
+
+#反馈表
+class Feedback(Model):
+	__table__ = 'feedback'
+	id = StringField(primary_key = True,default = next_id,ddl='varchar(50)')
+	feedbackContent = TextField()
+	userId = StringField(ddl='varchar(255)')
+	nickName = StringField(ddl = 'varchar(255)')
 	create_at = FloatField(default = time.time)
 
 #考试表

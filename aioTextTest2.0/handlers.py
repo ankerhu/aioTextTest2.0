@@ -1,20 +1,32 @@
-import re,time,json,logging,hashlib,base64,asyncio
+#import re,time,json,logging,hashlib,base64,asyncio
 from coroweb import get,post
-from models import User,Examination,Title,Question,Mark,Answer
+from models import User,Examination,Title,Question,Mark,Answer,Feedback
 from config import configs
 from aiohttp import ClientSession
-import json
-import warnings
-warnings.filterwarnings(action='ignore', category=UserWarning, module='gensim')
-from gensim.models.doc2vec import Doc2Vec
-import sys
+#from gensim.models.doc2vec import Doc2Vec
+import sys,json
 sys.path.append('../../../')
-from preprocessTheTxt import cut_sentence
+import calculateTheScore
 
-testModelD = Doc2Vec.load(r'F:\who\2018firsthalf\myself\这局稳了\coding\corpus\taggedSentences\testModels\doc2vec.model')
+
+#testModelD = Doc2Vec.load(r'F:\who\2018firsthalf\myself\这局稳了\coding\corpus\taggedSentences\testModels\doc2vec.model')
 appId = configs.mina.appId
 appSecret = configs.mina.appSecret
-
+calculate_question_functionDict={
+                                '01_zjgk16_mq_01':calculateTheScore.mq_01,
+                                '01_zjgk16_mq_02':calculateTheScore.mq_02,
+                                '01_zjgk16_mq_03':calculateTheScore.mq_03,
+                                '01_zjgk16_mq_04':calculateTheScore.mq_04,
+                                '01_zjgk16_mq_05':calculateTheScore.mq_05,
+                                '01_zjgk16_yybgyxzgxdwxxsdfz_01':calculateTheScore.yybgyxzgxdwxxsdfz_01,
+                                '02_njmn16 _sscsbys_01':calculateTheScore.sscsbys_01,
+                                '02_njmn16 _sscsbys_02':calculateTheScore.sscsbys_02,
+                                '02_njmn16 _sscsbys_03':calculateTheScore.sscsbys_03,
+                                '02_njmn16 _sscsbys_04':calculateTheScore.sscsbys_04,
+                                '02_njmn16_krqs_01':calculateTheScore.krqs_01,
+                                '02_njmn16_krqs_02':calculateTheScore.krqs_02,
+                                '02_njmn16_krqs_03':calculateTheScore.krqs_03
+                                }
 @get('/')
 async def index(**kw):
 
@@ -40,10 +52,10 @@ async def index(**kw):
 
     #获取用户答案，更新Answer表
     if kw.get('answer',None) and kw.get('question_id',None) and kw.get('SessionId',None):
-        
-        answer = Answer(answerText=kw.get('answer'),question_id=kw.get('question_id'),user_id=kw.get('SessionId'))
+        score = calculate_question_functionDict[kw.get('question_id')](kw.get('answer'))
+        answer = Answer(answerText=kw.get('answer'),question_id=kw.get('question_id'),user_id=kw.get('SessionId'),markNumByMachine=score)
         await  answer.save()
-        return answer.id
+        return answer.markNumByMachine
         
     #获取题库以及答案列表
     if kw.get('listName',None):
@@ -54,3 +66,10 @@ async def index(**kw):
             for t in e['titles']:
                 t['questions'] = [qs for qs in await Question.findAll('title_id=?',t.id)] 
         return json.dumps(examinations)
+
+    #添加反馈到FeedBack表
+    if kw.get('feedback',None) and kw.get('SessionId',None):
+        currentUser = await User.find(kw.get('SessionId'))
+        feedback = Feedback(feedbackContent=kw.get('feedback'),userId=currentUser.id,nickName=currentUser.nickName)
+        await feedback.save()
+        return 'done'
