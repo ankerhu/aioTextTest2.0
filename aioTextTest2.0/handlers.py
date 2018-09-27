@@ -75,7 +75,7 @@ async def index(**kw):
         await feedback.save()
         return 'done'
 
-    #根据titleId查询user
+    #根据titleId查询user，并返回respondents
     if kw.get('titleId',None):
         respondents = {}
         for question in await Question.findAll('title_id=?',kw.get('titleId')):
