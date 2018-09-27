@@ -32,6 +32,7 @@ async def index(**kw):
 
     #用户登录：接受客户端传来的code和nickname，从微信服务器获取openin和session_key，检索数据库，有则更新，无则增加一条记录
     if kw.get('code',None) and kw.get('nickName',None):
+        print(appId)
         wxAPIURL = 'https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code' % (appId,appSecret,kw.get('code'))
         async with ClientSession() as session:
             async with session.get(wxAPIURL) as resp:
@@ -73,3 +74,17 @@ async def index(**kw):
         feedback = Feedback(feedbackContent=kw.get('feedback'),userId=currentUser.id,nickName=currentUser.nickName)
         await feedback.save()
         return 'done'
+
+    #根据titleId查询user
+    if kw.get('titleId',None):
+        respondents = {}
+        for question in await Question.findAll('title_id=?',kw.get('titleId')):
+            for answer in await Answer.findAll('question_id=?',question.id):
+                u = await User.find(answer.user_id)
+                q = await Question.find(question.id)
+                if answer.user_id + u.nickName in respondents:
+                    #用user_id加上nickName作为key是避免出现用户有相同昵称，所以在value中还加上了user_id，方便客户端将key中的user_id去掉
+                    respondents[answer.user_id + u.nickName].append([answer.user_id,answer.answerText,answer.markNumByMachine,q.questionContent,q.markReference])
+                else:
+                    respondents[answer.user_id + u.nickName]=[[answer.user_id,answer.answerText,answer.markNumByMachine,q.questionContent,q.markReference]]
+        return json.dumps(respondents)
