@@ -127,11 +127,11 @@ def calculateSentenceSimilarity(answer,*referenceSentencesList):
                             minDistance = distance
                             minAnswerSentenceCut = answerSentenceCut
                             minReferenceSentenceIndex = index
-                            '''
+                            
                             print(distance)
                             print(minAnswerSentenceCut)
                             print(referenceSentenceCut)
-                            '''
+                            
                 index += 1
         else:#说明回答句还没答案点多,立刻停止循环
             break
@@ -224,7 +224,7 @@ def yybgyxzgxdwxxsdfz_01(answer):
     #答案点1和2分别为两分
     for distance in calculateSentenceSimilarity(answer,referenceSentencesList1):
         #print(distance)
-        if distance < 6.5:#6.5来自于“文言也加入到现代创作中”的距离
+        if distance < 6:#6来自于“现代文学”的距离
             score += 2
     #答案点3得一分
     for distance in calculateSentenceSimilarity(answer,referenceSentencesList2):
@@ -253,7 +253,7 @@ def sscsbys_02(answer):
     referenceSentencesList = [referenceSentences1,referenceSentences2,referenceSentences3]
     score = 0
     for distance in calculateSentenceSimilarity(answer,referenceSentencesList):
-        print(distance)
+        #print(distance)
         if distance < 10:#10来自于“拉长了序幕，万事万物蓄势待发，春色亮相时突出了热烈”
             score += 2
     return score
@@ -264,7 +264,7 @@ def sscsbys_03(answer):
     referenceSentencesList = [referenceSentences1,referenceSentences2]
     score = 0
     for distance in calculateSentenceSimilarity(answer,referenceSentencesList):
-        print(distance)
+        #print(distance)
         if distance < 8.5:#8.5来自于“感慨时间的流逝，怀念爱人”
             score += 2
     return score 
@@ -316,9 +316,9 @@ def krqs_03(answer):
     referenceSentencesList = [referenceSentences1,referenceSentences2,referenceSentences3]
     score = 0
     for distance in calculateSentenceSimilarity(answer,referenceSentencesList):
-        print(distance)
+        #print(distance)
         if distance < 8:#8来自于上一道题，“能说会道，主张宽容，脱离现实”
             score += 2
     return score
 
-print(mq_01('，疲惫，搞笑'))
+print(yybgyxzgxdwxxsdfz_01('文言也加入到现代创作中'))

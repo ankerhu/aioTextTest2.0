@@ -79,12 +79,28 @@ async def index(**kw):
     if kw.get('titleId',None):
         respondents = {}
         for question in await Question.findAll('title_id=?',kw.get('titleId')):
-            for answer in await Answer.findAll('question_id=?',question.id):
+            for answer in await Answer.findAll('question_id=?',question.id,orderBy='create_at asc'):
                 u = await User.find(answer.user_id)
-                q = await Question.find(question.id)
+                pickerArray = ['请选择分数，确认即提交']
+                for i in range(question.fullMark):
+                    pickerArray.append(i+1)
                 if answer.user_id + u.nickName in respondents:
                     #用user_id加上nickName作为key是避免出现用户有相同昵称，所以在value中还加上了user_id，方便客户端将key中的user_id去掉
-                    respondents[answer.user_id + u.nickName].append([answer.user_id,answer.answerText,answer.markNumByMachine,q.questionContent,q.markReference])
+                    respondents[answer.user_id + u.nickName].append({'user_id':answer.user_id,'answer_id':answer.id,'answerText':answer.answerText,'markNumByMachine':answer.markNumByMachine,'question_id':answer.question_id,'pickerArray':pickerArray,'pickerIndex':0,'display':'none'})
                 else:
-                    respondents[answer.user_id + u.nickName]=[[answer.user_id,answer.answerText,answer.markNumByMachine,q.questionContent,q.markReference]]
+                    respondents[answer.user_id + u.nickName]=[{'user_id':answer.user_id,'answer_id':answer.id,'answerText':answer.answerText,'markNumByMachine':answer.markNumByMachine,'question_id':answer.question_id,'pickerArray':pickerArray,'pickerIndex':0,'display':'none'}]
         return json.dumps(respondents)
+
+    
+    #根据titleId查询对应用户的答案
+    if kw.get('answeredTitleId',None):
+        questionsAnswered=[]
+        for question in await Question.findAll('title_id=?',kw.get('answeredTitleId')):
+            questionsAnswered.append({'questionContent':question.questionContent,'markReference':question.markReference,'id':question.id,'answers':[]})
+        return json.dumps(questionsAnswered)
+
+    #
+    if kw.get('markNumByUser',None) and kw.get('user_mark_id',None) and kw.get('answer_id',None):
+        mark = Mark(user_mark_id=kw.get('user_mark_id'),answer_id= kw.get('answer_id'),markNumByUser=kw.get('markNumByUser'))
+        await mark.save()
+        return '稳了'

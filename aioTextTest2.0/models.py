@@ -1,5 +1,5 @@
 import time,uuid
-from orm import Model,StringField,BooleanField,FloatField,TextField
+from orm import Model,StringField,BooleanField,FloatField,TextField,IntegerField
 
 def next_id():
 	return '%015d%s000' % (int(time.time() * 1000),uuid.uuid4().hex)
@@ -46,6 +46,7 @@ class Question(Model):
 	title_id = StringField(ddl='varchar(50)')
 	questionContent = TextField()
 	markReference = TextField()
+	fullMark = IntegerField()
 
 #评分表
 class Mark(Model):
@@ -54,7 +55,7 @@ class Mark(Model):
 	id = StringField(primary_key = True,default = next_id,ddl='varchar(50)')
 	user_mark_id = StringField(ddl='varchar(50)')
 	answer_id = StringField(ddl='varchar(50)')
-	markNumByUser = FloatField(default=0.0)
+	markNumByUser = IntegerField()
 	create_at = FloatField(default = time.time)
 
 #答案表
