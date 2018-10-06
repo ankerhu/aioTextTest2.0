@@ -81,7 +81,7 @@ async def index(**kw):
         for question in await Question.findAll('title_id=?',kw.get('titleId')):
             for answer in await Answer.findAll('question_id=?',question.id,orderBy='create_at asc'):
                 u = await User.find(answer.user_id)
-                pickerArray = ['请选择分数，确认即提交']
+                pickerArray = ['请选择分数，确定即提交',0]
                 for i in range(question.fullMark):
                     pickerArray.append(i+1)
                 if answer.user_id + u.nickName in respondents:
@@ -99,8 +99,41 @@ async def index(**kw):
             questionsAnswered.append({'questionContent':question.questionContent,'markReference':question.markReference,'id':question.id,'answers':[]})
         return json.dumps(questionsAnswered)
 
-    #
+    #获取用户评分，存到Mark表中
     if kw.get('markNumByUser',None) and kw.get('user_mark_id',None) and kw.get('answer_id',None):
         mark = Mark(user_mark_id=kw.get('user_mark_id'),answer_id= kw.get('answer_id'),markNumByUser=kw.get('markNumByUser'))
         await mark.save()
         return '稳了'
+
+    #根据I_mark_sessionId和questions数组得到I_mark_table表格
+    if kw.get('I_mark_sessionId',None) and kw.get('questionIds',None):
+        I_mark_table = {}
+        for marksByMe in await Mark.findAll('user_mark_id=?',kw.get('I_mark_sessionId'),orderBy='create_at asc'):#查询该用户打得分，按时间升序排列
+            for questionId in json.loads(kw.get('questionIds')):
+                I_mark_table.setdefault(questionId,[])
+                for answer in await Answer.findAll('question_id=?',questionId,orderBy='create_at asc'):#查询某道题的回答，按时间升序排列
+                    #当该用户打分的answer_id与根据question_id查询到的answer_id相等时，则是该用户给这道题打的所有分，有可能同道题同个人答了多次，也可能给同个人的一次答题打了多次分
+                    if answer.id == marksByMe.answer_id:
+                        userAnswered = await User.find(answer.user_id)
+                        I_mark_table[questionId].append({'answerText':answer.answerText,'userNickname':userAnswered.nickName , 'markNumByMachine':answer.markNumByMachine , 'markNumByUser':marksByMe.markNumByUser})
+        return json.dumps(I_mark_table)
+
+    #根据sessionId和questions数组得到I_mark_table表格
+    if kw.get('mark_me_sessionId',None) and kw.get('questionIds',None):
+        mark_me_table={}
+        for questionId in json.loads(kw.get('questionIds')):
+            mark_me_table.setdefault(questionId,[])
+            for answer in await Answer.findAll('question_id=?',questionId,orderBy='create_at asc'):
+                if answer.user_id == kw.get('mark_me_sessionId'):
+                    tableList = []
+                    for mark in await Mark.findAll('answer_id=?',answer.id):
+                        user = await User.find(mark.user_mark_id)
+                        tableList.append({'userNickname':user.nickName,'markNumByUser':mark.markNumByUser})
+                    mark_me_table[questionId].append({'answerText':answer.answerText,'markNumByMachine':answer.markNumByMachine,'table':tableList})                    
+        return json.dumps(mark_me_table)
+            
+@get('/test')
+async def test(**kw):
+    return {
+        '__template__': 'test.html'
+    }

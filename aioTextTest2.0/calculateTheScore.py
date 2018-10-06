@@ -278,7 +278,7 @@ def sscsbys_04(answer):
     score = 0
     for distance in calculateSentenceSimilarity(answer,referenceSentencesList):
         #print(distance)
-        if distance < 8:#8来自于上一道题，该题答案参考少，所以范围较大
+        if distance < 6:#6来自于乱答
             score += 2
     if score > 6:
         score = 6
@@ -292,7 +292,7 @@ def krqs_01(answer):
     score = 0
     for distance in calculateSentenceSimilarity(answer,referenceSentencesList):
        # print(distance)
-        if distance < 12:#12来自于“能说会道，主张宽容，脱离现实”
+        if distance < 10:#12来自于“能说会道，主张宽容，脱离现实”
             score += 2
     return score
 
@@ -321,4 +321,4 @@ def krqs_03(answer):
             score += 2
     return score
 
-print(yybgyxzgxdwxxsdfz_01('文言也加入到现代创作中'))
+#print(sscsbys_04('测试'))
